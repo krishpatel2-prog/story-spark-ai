@@ -53,7 +53,7 @@ class ErrorBoundary extends Component<Props, State> {
         "app_error_log",
         JSON.stringify(existing.slice(0, 10))
       );
-    } catch {
+    } catch (_) {
       // Fail silently if localStorage is unavailable
     }
 

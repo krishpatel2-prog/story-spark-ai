@@ -333,7 +333,6 @@ export default function AIWritingAssistant() {
           Join thousands of writers already using StorySpark to push past limits and find their story.
         </p>
         <button
-          onClick={() => window.location.href = "/stories"}
           style={{
             background: "linear-gradient(135deg, #7C5DFA 0%, #4F8EF7 100%)",
             border: "none",

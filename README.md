@@ -75,18 +75,7 @@
 
    > Never commit `backend/.env` or `frontend/.env`. Only `.env.example` files belong in git.
 
-4. **First-Time Setup (Admin Seeding)**
-
-   Before starting the server for the first time, you must create an admin user:
-   
-   ```bash
-   cd backend
-   npx ts-node scripts/seed-admin.ts
-   ```
-   
-   Make sure `ADMIN_EMAIL` and `ADMIN_PASSWORD` are set in your `backend/.env` file.
-
-5. **Run apps**
+4. **Run apps**
 
    - **Both** (two terminals or one combined process):
 
@@ -97,7 +86,7 @@
    - **Backend only:** `npm run dev:backend` — API (default port **5000** if `PORT` is unset).
    - **Frontend only:** `npm run dev:frontend` — Vite dev server on **http://localhost:4001**
 
-6. **Production builds**
+5. **Production builds**
 
    ```bash
    npm run build

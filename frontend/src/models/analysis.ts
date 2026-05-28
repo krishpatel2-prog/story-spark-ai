@@ -24,21 +24,9 @@ export interface DashboardAnalysis {
     totalPosts: number;
     subscriptionStatus: string;
     applicationStatus: string;
-    gamification?: {
-      xp: number;
-      level: number;
-      streak: number;
-      badges: string[];
-    };
   };
   userStats?: {
     subscriptionStatus: string;
     applicationStatus: string;
-    gamification?: {
-      xp: number;
-      level: number;
-      streak: number;
-      badges: string[];
-    };
   };
 }

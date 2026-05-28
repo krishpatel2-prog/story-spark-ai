@@ -71,12 +71,6 @@ const updateUser = async (token: ITokenPayload, payload: Partial<IUser>) => {
 };
 
 const deleteUser = async (id: string): Promise<void> => {
-  const userExists = await User.exists({ _id: id });
-
-  if (!userExists) {
-    throw new ApiError(httpStatus.NOT_FOUND, "User not found!");
-  }
-
   // Get all posts authored by this user
   const userPosts = await Post.find({ author: id }).select("_id").lean();
   const postIds = userPosts.map((p) => p._id);
@@ -118,11 +112,7 @@ const deleteUser = async (id: string): Promise<void> => {
   await Post.deleteMany({ author: id });
 
   // Finally delete the user
-  const result = await User.deleteOne({ _id: id });
-
-  if (result.deletedCount === 0) {
-    throw new ApiError(httpStatus.NOT_FOUND, "User not found!");
-  }
+  await User.deleteOne({ _id: id });
 };
 
 const applyForWriter = async (token: ITokenPayload) => {

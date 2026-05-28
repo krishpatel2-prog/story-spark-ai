@@ -1,7 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import config from "../config";
-import ApiError from "../errors/api_error";
-import httpStatus from "http-status";
 
 export interface IBranchingStoryRequest {
   storyContext: string;
@@ -15,6 +13,13 @@ export interface IBranchingStoryResponse {
   segmentIndex: number;
 }
 
+const FALLBACK_SEGMENT =
+  "The path ahead remains uncertain, but the story presses forward through the mist.";
+const FALLBACK_CHOICES = [
+  "Move forward carefully",
+  "Look for another path",
+  "Pause and reconsider",
+];
 
 const genAI = new GoogleGenerativeAI(config.gemini_api_key as string);
 
@@ -27,26 +32,23 @@ const stripCodeFences = (text: string): string =>
 
 const parsePayload = (text: string): { storySegment: string; choices: string[] } => {
   const cleaned = stripCodeFences(text);
-  let parsed: any;
-  
-  try {
-    parsed = JSON.parse(cleaned);
-  } catch (error) {
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Failed to parse AI response as JSON");
-  }
+  const parsed = JSON.parse(cleaned) as {
+    storySegment?: unknown;
+    choices?: unknown;
+  };
 
   if (
     typeof parsed.storySegment !== "string" ||
     !Array.isArray(parsed.choices) ||
     parsed.choices.length !== 3 ||
-    parsed.choices.some((choice: any) => typeof choice !== "string" || !choice.trim())
+    parsed.choices.some((choice) => typeof choice !== "string" || !choice.trim())
   ) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid branching story payload");
+    throw new Error("Invalid branching story payload");
   }
 
   return {
     storySegment: parsed.storySegment.trim(),
-    choices: parsed.choices.map((choice: string) => choice.trim()),
+    choices: parsed.choices.map((choice) => choice.trim()),
   };
 };
 
@@ -88,6 +90,11 @@ const getSegmentIndex = (storyContext: string): number => {
   return completedChoices + 1;
 };
 
+const createFallbackResponse = (storyContext: string): IBranchingStoryResponse => ({
+  storySegment: FALLBACK_SEGMENT,
+  choices: [...FALLBACK_CHOICES],
+  segmentIndex: getSegmentIndex(storyContext),
+});
 
 const createBranchingStory = async (
   payload: IBranchingStoryRequest
@@ -111,10 +118,7 @@ const createBranchingStory = async (
     };
   } catch (error) {
     console.error("Branching story generation failed:", error);
-    if (error instanceof ApiError) {
-      throw error;
-    }
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Branching story generation failed");
+    return createFallbackResponse(storyContext);
   }
 };
 

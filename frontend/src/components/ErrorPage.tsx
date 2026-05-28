@@ -27,7 +27,7 @@ const ErrorPage = () => {
       setTimeout(() => {
         window.location.reload();
       }, 300);
-    } catch {
+    } catch (_) {
       window.location.reload();
     }
   };

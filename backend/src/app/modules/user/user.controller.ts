@@ -61,17 +61,23 @@ const updateUser = async (req: Request, res: Response) => {
   }
 };
 
-const deleteUser = catchAsync(async (req: Request, res: Response) => {
-  const id = routeParam(req.params.id);
+const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const id = routeParam(req.params.id);
 
-  await UserService.deleteUser(id);
+    await UserService.deleteUser(id);
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "User deleted successfully!",
-  });
-});
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User deleted successfully!",
+    });
+  } catch (error) {
+    res.status(httpStatus.BAD_REQUEST).json({
+      message: "Fail to get users!",
+    });
+  }
+};
 
 const applyForWriter = catchAsync(async (req: Request, res: Response) => {
   const token = await getToken(req);

@@ -15,13 +15,7 @@ dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 async function connectDB() {
   if (mongoose.connection.readyState === 1) return;
-  const databaseUrl = config.database_url;
-  if (!databaseUrl) {
-    throw new Error(
-      "DATABASE_URL is not set. Define it in backend/.env before starting the server."
-    );
-  }
-  await mongoose.connect(databaseUrl);
+  await mongoose.connect(config.database_url as string);
 }
 
 async function main() {
