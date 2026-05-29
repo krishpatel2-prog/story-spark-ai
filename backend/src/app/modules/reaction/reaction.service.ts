@@ -8,7 +8,7 @@ import { Post } from "../post/post.model";
 
 const toggleReaction = async (
   postId: string,
-  type: string = "like",
+  type: "like" | "love" | "laugh" | "angry" | "sad" = "like",
   token: ITokenPayload
 ) => {
   const { email } = token;
